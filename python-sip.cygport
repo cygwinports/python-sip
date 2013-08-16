@@ -1,7 +1,7 @@
 inherit python qt4
 
 NAME="python-sip"
-VERSION=4.14.3
+VERSION=4.14.7
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python binding generator"
@@ -10,8 +10,8 @@ bindings for C and C++ libraries. It was originally developed to create
 PyQt, the Python bindings for the Qt toolkit, but can be used to create
 bindings for any C or C++ library."
 HOMEPAGE="http://www.riverbankcomputing.co.uk/software/sip/"
-SRC_URI="mirror://sourceforge/pyqt/sip-${PV}.tar.gz"
-SRC_DIR="sip-${PV}"
+SRC_URI="mirror://sourceforge/pyqt/sip-${VERSION}.tar.gz"
+SRC_DIR="sip-${VERSION}"
 
 CYGPORT_USE_UNSTABLE_API=1
 src_unpack_hook() {

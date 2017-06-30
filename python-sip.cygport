@@ -1,7 +1,7 @@
-inherit python qt4
+inherit python2 python3 qt4
 
 NAME="python-sip"
-VERSION=4.18.1
+VERSION=4.19.2
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python binding generator"
@@ -12,6 +12,17 @@ bindings for any C or C++ library."
 HOMEPAGE="http://www.riverbankcomputing.co.uk/software/sip/"
 SRC_URI="mirror://sourceforge/pyqt/sip-${VERSION}.tar.gz"
 SRC_DIR="sip-${VERSION}"
+PATCH_URI="
+	http://pkgs.fedoraproject.org/cgit/rpms/sip.git/plain/sip-4.18-no_strip.patch
+	4.13-cygwin-py32.patch
+"
+
+PKG_NAMES="python2-sip python3-sip python-sip-devel"
+python2_sip_OBSOLETES="python-sip"
+python2_sip_CONTENTS=${PYTHON2_SITELIB#/}
+python3_sip_CONTENTS=${PYTHON3_SITELIB#/}
+python_sip_devel_CONTENTS="usr/bin/sip.exe usr/include/ usr/share/doc/"
+python_sip_debuginfo_OBSOLETES="python3-sip-debuginfo"
 
 CYGPORT_USE_UNSTABLE_API=1
 src_unpack_hook() {
@@ -19,26 +30,38 @@ src_unpack_hook() {
 }
 
 src_compile() {
-	lndirs
-	cd ${B}
+	mkdir -p ${B}/py2
+	cd ${B}/py2
 
-	rm configure.py
-	cp ${S}/configure.py .
-
-	${PYTHON} configure.py \
+	${PYTHON2} ${S}/configure.py \
 		-p ${QMAKESPEC} \
-		-b ${PYTHON_SITELIB} \
-		-d ${PYTHON_SITELIB} \
-		-e ${PYTHON_INCLUDEDIR} \
-		-v /usr/share/${PN} \
-		"CFLAGS+=${CFLAGS}" "CXXFLAGS+=${CXXFLAGS}" \
+		-b /usr/bin \
+		-d ${PYTHON2_SITELIB} \
+		-e ${PYTHON2_INCLUDEDIR} \
+		-v /usr/share/sip \
+		"CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" \
+		|| error "configure.py failed"
+
+	cygmake
+
+	mkdir -p ${B}/py3
+	cd ${B}/py3
+
+	${PYTHON3} ${S}/configure.py \
+		-p ${QMAKESPEC} \
+		-b /usr/bin \
+		-d ${PYTHON3_SITELIB} \
+		-e ${PYTHON3_INCLUDEDIR} \
+		-v /usr/share/sip \
+		"CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" \
 		|| error "configure.py failed"
 
 	cygmake
 }
 
 src_install() {
-	cd ${B}
+	cd ${B}/py2
 	cyginstall
-	python_optimize
+	cd ${B}/py3
+	cyginstall
 }

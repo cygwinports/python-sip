@@ -1,7 +1,7 @@
 inherit python2 python3 qt4
 
 NAME="python-sip"
-VERSION=4.19.2
+VERSION=4.19.3
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python binding generator"
